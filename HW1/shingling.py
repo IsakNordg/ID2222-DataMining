@@ -5,9 +5,9 @@ class Singling():
         self.k = k
         self.doc = doc
         self.shingles = self.get_shingles()
-        self.shingles_hash = self.get_shingles_hash()
-        self.shingles_hash_list = list(self.shingles_hash)
-        self.shingles_hash_list.sort()
+        self.shinglesHash = self.get_shingles_hash()
+        self.shinglesHashList = list(self.shingles_hash)
+        self.shinglesHashList.sort()
 
     def get_shingles(self):
         shingles = set()
@@ -16,10 +16,10 @@ class Singling():
         return shingles
     
     def get_shingles_hash(self):
-        shingles_hash = set()
+        shinglesHash = set()
         for shingle in self.shingles:
-            shingles_hash.add(hash(shingle))
-        return shingles_hash
+            shinglesHash.add(hash(shingle))
+        return shinglesHash
     
 class CompareSets():
     def __init__(self):
