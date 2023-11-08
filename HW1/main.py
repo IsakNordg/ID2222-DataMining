@@ -1,31 +1,32 @@
 from shingling import *
 from minhash import *
+from doc import *
 import sys, os
 
 class Main():
     def __init__(self):
-        self.readAllDocs()
+        self.docs = self.readAllDocs()
         
         self.k = 10
-        self.createShingles()
-        
-        self.minHash = MinHash(self.shingles, self.docs)
+        self.shingles = self.createShingles()
 
-        print(self.minHash.characteristic_matrix)
-
+        self.minHash = MinHash(self.docs)
+        print(self.minHash.get_similarity(self.docs[0], self.docs[1]))
+        print(self.minHash.get_similarity(self.docs[2], self.docs[3]))
 
     def readAllDocs(self):
-        self.docs = []
-        for filename in os.listdir("Data"):
-            with open("Data/" + filename, "r", encoding="utf8") as f:
-                doc=f.read().replace('\n', ' ')
-            self.docs.append(doc)
+        docs = []
+        dir = "Data"
+        for filename in os.listdir(dir):
+            docs.append(doc(dir + "/" + filename))
+        return docs
     
 
     def createShingles(self):
-        self.shingles = {}
+        shingles = {}
         for doc in self.docs:
-            self.shingles[doc] = Singling(self.k, doc)
+            shingles[doc.name] = doc.shingles
+        return shingles
 
 
 main = Main()
