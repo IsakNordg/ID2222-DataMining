@@ -1,0 +1,4 @@
+https://archive.ics.uci.edu/dataset/502/online+retail+ii
+https://archive.ics.uci.edu/dataset/228/sms+spam+collection
+https://archive.ics.uci.edu/dataset/462/drug+review+dataset+drugs+com
+https://archive.ics.uci.edu/dataset/484/travel+reviews
