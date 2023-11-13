@@ -4,7 +4,8 @@ import time
 
 class Apriori:
     def __init__(self) -> None:
-        self.s_precentage = 0.03    # support
+        start = time.time()
+        self.s_precentage = 0.01    # support  0.003 takes 180 seconds
         self.c = 0.5                # confidence
         self.frequent = {}          # frequent itemsets
 
@@ -14,10 +15,19 @@ class Apriori:
         
         self.runPasses()
 
+        totTime = time.time() - start
+
+        self.printFrequent()
+        print("Number of transactions:", self.l)
+        print("Support threshold:", self.s)
+        print("Time:", totTime)
+
+        self.test()
+        
         i = 0
 
     def readData(self, filename):
-        data = [i.strip().split() for i in open("T10I4D100K.dat").readlines()]
+        data = [i.strip().split() for i in open(filename).readlines()]
         longest = 0
 
         for line in data:
@@ -39,6 +49,8 @@ class Apriori:
             
             else:
                 for transaction in self.data:                       # For each transaction
+
+                    alreadyVisited = []
                     for previous in self.frequent[pass_number-1]:   # For each itemset in the previous frequent itemsets
                         if type(previous) == str:
                             previous = [previous]
@@ -49,23 +61,20 @@ class Apriori:
                                 break                               # Break out of the loop to go to the next previous itemset        
                         if flag:
                             continue
-                        for item in transaction:                            # For each item in the transaction we check if it is in the previous itemset
-                                                                            # and if it is frequent. If it is, we have an itemset where all subsets are frequent, so we add it to the dictionary
-                            if item not in previous and item in self.frequent[1].keys():                        
-                                itemSet = list(previous) + [item]                 # Create a new itemset
-                                itemSet.sort()
-                                itemSet = tuple(itemSet)
+                        for item in transaction:                                # For each item in the transaction we check if it is in the previous itemset
+                            itemSet = tuple(sorted(list(previous) + [item]))    # and if it is frequent. If it is, we have an itemset where all subsets are frequent, so we add it to the dictionary
+                            if item not in previous and item in self.frequent[1].keys() and itemSet not in alreadyVisited:
+                                alreadyVisited.append(itemSet)
                                 if itemSet in all:                          # And store it in the dictionary
                                     all[itemSet] += 1
                                 else:
                                     all[itemSet] = 1
-            
+
             self.frequent[pass_number] = {}
             for item in all:
                 if all[item] >= self.s:
                     self.frequent[pass_number][item] = all[item]
 
-                                    
 
     def firstPass(self):
         all = {}
@@ -78,39 +87,13 @@ class Apriori:
         return all
 
 
-    def secondPass(self):
-        all = {}
-        for transaction in self.data:
-            for i in range(len(transaction)):
-                for j in range(i+1, len(transaction)):
-                    if transaction[i] in self.frequent[1] and transaction[j] in self.frequent[1]:
-                        itemSet = tuple((transaction[i], transaction[j]))
-                        if itemSet in all:
-                            all[itemSet] += 1
-                        else:
-                            all[itemSet] = 1
-                
-        self.frequent[2] = {}
-        for item in all:
-            if all[item] >= self.s:
-                self.frequent[2][item] = all[item]
-    
-    def thirdPass(self):
-        all = {}
-        for transaction in self.data:
-            for i in range(len(transaction)):
-                for j in range(i+1, len(transaction)):
-                    for k in range(j+1, len(transaction)):
-                        if transaction[i] in self.frequent[1] and transaction[j] in self.frequent[1] and transaction[k] in self.frequent[1]:
-                            itemSet = tuple((transaction[i], transaction[j], transaction[k]))
-                            if itemSet in all:
-                                all[itemSet] += 1
-                            else:
-                                all[itemSet] = 1
-                
-        self.frequent[3] = {}
-        for item in all:
-            if all[item] >= self.s:
-                self.frequent[3][item] = all[item]
+    def printFrequent(self):
+        for item in self.frequent:
+            if len(self.frequent[item]) == 0:
+                break
+            print(f"Itemsets of size {item}:")
+            for itemset in self.frequent[item]:
+                    print(f"{itemset} ({self.frequent[item][itemset]})")
+            print("-----------------------")
 
 a = Apriori()
