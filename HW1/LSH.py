@@ -53,7 +53,8 @@ class LSH:
                     if similarity >= self.t:
                         similarDocs.add((doc1.name, doc2.name, similarity))
                     else:
-                        print("Similarity for " + doc1.name + " and " + doc2.name + " below threshold: " + str(similarity))
+                        # print("Similarity for " + doc1.name + " and " + doc2.name + " below threshold: " + str(similarity))
+                        pass
         
         return similarDocs
 

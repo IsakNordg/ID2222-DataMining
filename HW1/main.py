@@ -11,13 +11,13 @@ class Main():
         # Hyperparameters
         self.k_shingle = 10     # Shingle size
         self.k_perm = 100       # Permutations
-        self.t = 0.2            # Threshold
-        self.b = 50              # Bands
+        self.t = 0.05            # Threshold
+        self.b = 50             # Bands
 
         # This is used to change the data used. All text files in the folder will be read and compared
         # self.dir = "Data\sports+articles+for+objectivity+analysis\Raw data"   # NOTE: Finds no similar docs
         # self.dir = "Data\sms+spam+collection\Split"                           # NOTE: Finds some similar docs, but they are very short
-        self.dir = "DataPresidents"                                             # NOTE: Finds similar docs
+        # self.dir = "DataPresidents"                                             # NOTE: Finds similar docs
         self.dir = "DataMovies"
 
         self.docs = self.readAllDocs()
@@ -32,6 +32,7 @@ class Main():
 
         self.lsh = LSH(self.minHash, b = self.b, t = self.t)
         print("LSH created")
+        print()
 
         self.lsh.printSimilarDocs()
         

@@ -3,33 +3,25 @@ import time
 # You are to solve the first sub-problem: to implement the A-Priori algorithm for finding frequent itemsets with support at least s in a dataset of sales transactions. Remind that support of an itemset is the number of transactions containing the itemset. To test and evaluate your implementation, write a program that uses your A-Priori algorithm implementation to discover frequent itemsets with support at least s in a given dataset of sales transactions.
 
 class Apriori:
-    def __init__(self) -> None:
-        start = time.time()
-        self.s_precentage = 0.01    # support  0.003 takes 180 seconds
-        self.c = 0.5                # confidence
-        self.frequent = {}          # frequent itemsets
+    def __init__(self, s_precentage = 0.03, filename = 'T10I4D100K.dat'):
+        
+        self.s_precentage = s_precentage    # support  0.003 takes 180 seconds
+        self.filename = filename            # filename
+        self.frequent = {}                  # frequent itemsets
 
-        self.data = self.readData('T10I4D100K.dat')
+        self.data = self.readData(filename)
         self.l = len(self.data)
         self.s = self.l * self.s_precentage # Support required to be considered frequent
-        
+
         self.runPasses()
 
-        totTime = time.time() - start
-
-        self.printFrequent()
-        print("Number of transactions:", self.l)
-        print("Support threshold:", self.s)
-        print("Time:", totTime)
-
-        self.test()
-        
-        i = 0
 
     def readData(self, filename):
+        # Read the data from the file
         data = [i.strip().split() for i in open(filename).readlines()]
         longest = 0
 
+        # Find the longest transaction
         for line in data:
             if len(line) > longest:
                 longest = len(line)
@@ -88,12 +80,21 @@ class Apriori:
 
 
     def printFrequent(self):
-        for item in self.frequent:
-            if len(self.frequent[item]) == 0:
+        for i in self.frequent:
+            if len(self.frequent[i]) == 0:
                 break
-            print(f"Itemsets of size {item}:")
-            for itemset in self.frequent[item]:
-                    print(f"{itemset} ({self.frequent[item][itemset]})")
+            
+            if i == 1:
+                print(f"Itemsets of size {i}:")
+                for itemset in self.frequent[i]:
+                    print(f"{itemset} ({self.frequent[i][itemset]}), ", end="")
+                print()
+                print("-----------------------")
+                continue
+
+            print(f"Itemsets of size {i}:")
+            for itemset in self.frequent[i]:
+                    print(f"{itemset} ({self.frequent[i][itemset]})")
             print("-----------------------")
 
 a = Apriori()
