@@ -5,7 +5,7 @@ import time
 class Main:
     def __init__(self):
         # Hyperparameters
-        s_precentage = 0.0001
+        s_precentage = 0.01
         c = 0.5
 
         start = time.time()

@@ -31,9 +31,6 @@ class Apriori:
     def runPasses(self):
         for pass_number in range(1, self.longest + 1): #self.longest):
             all = {}
-
-            if pass_number == 3 or pass_number == 4:
-                i = 0
             
             # The first pass is a special case
             if pass_number == 1:
@@ -62,6 +59,7 @@ class Apriori:
                                 else:
                                     all[itemSet] = 1
 
+            # Check which itemsets are frequent
             self.frequent[pass_number] = {}
             for item in all:
                 if all[item] >= self.s:

@@ -10,19 +10,23 @@ class RuleGeneration:
     def findRules(self):
         rules = []
         for itemSetLength in self.frequent:
-            if itemSetLength == 1:
+            if itemSetLength == 1:  # We can't generate rules from single items
                 continue
             for itemSet in self.frequent[itemSetLength]:
                 itemSet = list(itemSet)
                 subsets = self.findsubsets(itemSet, len(itemSet)-1)
 
+                # Checck if any of the subsets give a rule of confidence >= c
                 for subset in subsets:
+                    # Just conversion. Has to do with how the frequent itemsets are stored
                     if len(subset) == 1:
                         leftSide = subset[0]
                     else:
                         leftSide = list(subset)
                     rightSide = list(set(itemSet) - set(subset))
 
+                    # Calculate confidence, which is the support of the itemset divided by the support of the left side
+                    # Confidence <- "Out of all times the left side appears, how many times does the right side also appear?"
                     if type(leftSide) == str:
                         conf = self.frequent[itemSetLength][tuple(itemSet)] / self.frequent[1][leftSide]
                     else:
@@ -38,8 +42,8 @@ class RuleGeneration:
     # https://www.geeksforgeeks.org/python-program-to-get-all-subsets-of-given-size-of-a-set/
     def findsubsets(self, s, n):
         subsets = []
-        for i in range(1, len(s)):
-            for subset in itertools.combinations(s, i):
+        for i in range(1, len(s)):  # For each possible length of the subset
+            for subset in itertools.combinations(s, i): # Generate all possible subsets of that length
                 subsets.append(subset)
         return subsets
             
