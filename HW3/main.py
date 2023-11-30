@@ -44,7 +44,7 @@ class Main:
     
     def runBuffered(self):
         start = time.time()
-        with open("web-Stanford-noDupes.txt", "r") as file:
+        with open("web-Stanford.txt", "r") as file:
             for line in file:
                 # Skip comments and empty lines
                 if line[0] == "#" or line[0] == "\n":
@@ -78,7 +78,7 @@ def runTests(n = 5):
     times = []
     for i in range(n):
         start = time.time()
-        main = Main(M=50000, algorithm="Impr")
+        main = Main(M=10000, algorithm="Base")
         main.runBuffered()
         estimates.append(main.Triest.getEstimate())
         estimates_diff.append(main.Triest.getEstimate() - 11329473)

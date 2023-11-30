@@ -1,6 +1,6 @@
 
 tuples = {}
-with open("web-Google.txt", "r") as file:
+with open("web-Stanford.txt", "r") as file:
     for line in file:
         # Skip comments and empty lines
         if line[0] == "#" or line[0] == "\n":
@@ -17,6 +17,6 @@ with open("web-Google.txt", "r") as file:
         if edge not in tuples:
             tuples[edge] = 0
         
-with open("web-Google-noDupes.txt", "w") as file:
+with open("web-Stanford-noDupes.txt", "w") as file:
     for edge in tuples:
         file.write(str(edge[0]) + " " + str(edge[1]) + "\n")

@@ -8,7 +8,7 @@ class TriestBase:
         self.S = set()
         self.tau = 0
         self.counters = dict()
-        self.neighbors = dict()
+        self.neighbors = dict() # Contains a list the neighbors of each node 
 
     def update(self, edge):
         if edge in self.S:
@@ -20,9 +20,12 @@ class TriestBase:
             self.updateCounters(edge, 1)
             self.updateNeighbors(edge, 1)
 
+    # Determines whether to sample the edge or not
     def sampleEdge(self, edge):
+        # If we haven't reached the sample size, sample the edge
         if self.t <= self.M:
             return True
+        # If the edge is sampled, remove a random edge from the sample and update
         elif random.random() <= self.M / self.t:
             randEdge = random.sample(self.S, 1)[0]
             self.S.remove(randEdge)
@@ -44,11 +47,16 @@ class TriestBase:
             # self.incrementLocalCounters(edge, c, sign)
 
     def updateNeighbors(self, edge, sign):
+        # N_u ← N_u • {v}
+        # N_v ← N_v • {u}
+        
+        # If the node is not in the neighbors dict, add it
         if edge[0] not in self.neighbors:
             self.neighbors[edge[0]] = set()
         if edge[1] not in self.neighbors:
             self.neighbors[edge[1]] = set()
 
+        # Add or remove the edge from the neighbors dict
         if sign == 1:
             self.neighbors[edge[0]].add(edge[1])
             self.neighbors[edge[1]].add(edge[0])
@@ -88,5 +96,6 @@ class TriestBase:
             del self.counters[c]
 
     def getEstimate(self):
+        # Xi is the factor to correct for the sampling
         xi = max(1, (self.t * (self.t - 1) * (self.t - 2)) / (self.M * (self.M - 1) * (self.M - 2)))
         return round(self.tau * xi)

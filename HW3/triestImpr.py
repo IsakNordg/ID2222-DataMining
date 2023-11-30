@@ -18,8 +18,11 @@ class TriestImpr:
             self.updateNeighbors(edge, 1)
 
     def sampleEdge(self, edge):
+        # If we haven't reached the sample size, sample the edge
         if self.t <= self.M:
             return True
+
+        # If the edge is sampled, remove a random edge from the sample and update
         elif random.random() <= self.M / self.t:
             randEdge = random.sample(self.S, 1)[0]
             self.S.remove(randEdge)
