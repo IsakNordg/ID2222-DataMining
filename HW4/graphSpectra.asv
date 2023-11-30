@@ -1,8 +1,8 @@
 clear all;
 clc;
 
-k = 2;
-E = csvread('example2.dat');
+k = 4;
+E = csvread('example1.dat');
 
 % ---Step 1---
 col1 = E(:,1);
@@ -31,14 +31,12 @@ Y = normr(X);
 clusters = kmeans(Y, k);
 clusters_mat = zeros(length(Y), k); % Initialize clusters_mat with the correct size
 
-plt = plot(graph(A), 'Layout', 'force3')
-cluster_colors=hsv(k);
-% ---Step 6---
 % Assign each original point to its respective cluster
 for i = 1:k
     cluster_idx = find(clusters == i);
-    clusters_mat(cluster_idx, i) = 1; 
-    highlight(plt, cluster_idx , 'NodeColor', cluster_colors(i,:))
+    clusters_mat(cluster_idx, i) = 1; % Assign 1 to elements corresponding to cluster_idx
 end
 
-disp(clusters_mat);
+%plot3(graph(A))
+plot(graph(A), 'Layout', 'force3')
+%h=plot(graph(A),'Layout','force3')
