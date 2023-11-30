@@ -1,10 +1,10 @@
 clear all;
 clc;
 
-k = 5;
-
+k = 4;
 E = csvread('example1.dat');
 
+% ---Step 1---
 col1 = E(:,1);
 col2 = E(:,2);
 max_ids = max(max(col1,col2));
@@ -13,23 +13,22 @@ A = full(As);
 
 % spy(A); % Plots the adjacency matrix
 
+% ---Step 2---
 D = diag(sum(A, 2));
 
-D_inv_sqrt = diag(1./sqrt(diag(D)));
-L = D_inv_sqrt * A * D_inv_sqrt;
+L = (D^(-1/2)*A*D^(-1/2));
 
-[vecs, vals] = eigs(L, k, 'largestabs');
-[V D] = eigs(L, k, 'SA');
+% ---Step 3---
+[vecs, vals] = eigs(L, k);
 
 % Ortogonaliserad?
 X = vecs;
 
+% ---Step 4---
 Y = normr(X);
 
-% Apply K-means clustering
-[idx, centers] = kmeans(Y, k);
-
-clusters = cell(1, k);
+% ---Step 5---
+clusters = kmeans(Y, k);
 
 % Assign each original point to its respective cluster
 for i = 1:length(idx)
@@ -39,6 +38,6 @@ end
 
 % Display points in each cluster (optional)
 for j = 1:k
-    fprintf('Points in Cluster %d:\n', j);
-    disp(clusters{j});
+    %fprintf('Points in Cluster %d:\n', j);
+    %disp(clusters{j});
 end
