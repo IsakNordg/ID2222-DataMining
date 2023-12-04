@@ -5,7 +5,7 @@ k=4
 E=csvread('example1.dat');
 algorithm(E, k);
 %%
-k=2
+%k=2
 %E=csvread('example2.dat');
 %algorithm(E, k);
 %%

@@ -11,7 +11,7 @@ max_ids = max(max(col1,col2));
 As= sparse(col1, col2, 1, max_ids, max_ids); 
 A = full(As);
 
-% spy(A); % Plots the adjacency matrix
+spy(A) % Plots the adjacency matrix
 
 % ---Step 2---
 D = diag(sum(A, 2));
@@ -20,8 +20,6 @@ L = (D^(-1/2)*A*D^(-1/2));
 
 % ---Step 3---
 [vecs, vals] = eigs(L, k);
-
-% Ortogonaliserad?
 X = vecs;
 
 % ---Step 4---
@@ -31,12 +29,14 @@ Y = normr(X);
 clusters = kmeans(Y, k);
 clusters_mat = zeros(length(Y), k); % Initialize clusters_mat with the correct size
 
+plt = plot(graph(A), 'Layout', 'force3');
+
+colors=hsv(k);
+% ---Step 6---
 % Assign each original point to its respective cluster
 for i = 1:k
-    cluster_idx = find(clusters == i);
-    clusters_mat(cluster_idx, i) = 1; % Assign 1 to elements corresponding to cluster_idx
+    cluster_idx = find(clusters == i); % Finds the index of all clusters belonging to cluster i
+    clusters_mat(cluster_idx, i) = 1; % Not used, but useful
+    highlight(plt, cluster_idx , 'NodeColor', colors(i,:))
 end
 
-%plot3(graph(A))
-plot(graph(A), 'Layout', 'force3')
-%h=plot(graph(A),'Layout','force3')
