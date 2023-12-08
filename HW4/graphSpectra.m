@@ -1,8 +1,8 @@
 clear all;
 clc;
 
-k = 2;
-E = csvread('example2.dat');
+k = 4;
+E = csvread('example1.dat');
 
 % ---Step 1---
 % Create the adjececy matrix A
@@ -18,14 +18,20 @@ figure(2)
 
 % ---Step 2---
 % Diagonalize and create Laplacian matrix
+
+% All neighbors of A
 D = diag(sum(A, 2));
 
-L = (D^(-1/2)*A*D^(-1/2));
+% Want high internal and low external affinity
+% Diagonal elements represent every edge that leaves the cluster
+% Other elements represents the ones within
+
+L = (D^(-1/2)*A*D^(-1/2)); 
 
 % ---Step 3---
 % Calculate eigenvalues of the Laplacian matrix
 [vecs, vals] = eigs(L, k);
-X = vecs;
+X = vecs;   % Represent clusters as a long binary col-vector
 
 % ---Step 4---
 % Normalize the eigenvalues
