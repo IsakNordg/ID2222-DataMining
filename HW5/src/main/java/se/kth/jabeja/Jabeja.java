@@ -20,6 +20,8 @@ public class Jabeja {
   private float T;
   private boolean resultFileCreated = false;
 
+  private int rounds = 0;
+
   //-------------------------------------------------------------------
   public Jabeja(HashMap<Integer, Node> graph, Config config) {
     this.entireGraph = graph;
@@ -50,10 +52,30 @@ public class Jabeja {
    */
   private void saCoolDown(){
     // TODO for second task
+
+    boolean annealing = false;
+
+    float min = 0.0001f;
+    int maxRounds = 200;
+
+
+    if(annealing){
+        T *= config.getDelta();
+      if (T < min) T = min;
+
+      if (T == min) {
+        rounds++;
+        if(rounds == maxRounds) {
+          T = config.getTemperature();
+          rounds = 0;
+        }
+      }
+    } else {
     if (T > 1)
       T -= config.getDelta();
     if (T < 1)
       T = 1;
+    }
   }
 
   /**
@@ -73,11 +95,18 @@ public class Jabeja {
     if (config.getNodeSelectionPolicy() == NodeSelectionPolicy.HYBRID
             || config.getNodeSelectionPolicy() == NodeSelectionPolicy.RANDOM) {
       // if local policy fails then randomly sample the entire graph
-      partner = findPartner(nodeId, getSample(nodeId));
+      if (partner == null){
+        partner = findPartner(nodeId, getSample(nodeId));
+      }
     }
 
     // swap the colors
-    
+    if(partner != null){
+      int tmp = nodep.getColor();
+      nodep.setColor(partner.getColor());
+      partner.setColor(tmp);
+      numberOfSwaps++;
+    }    
   }
 
   public Node findPartner(int nodeId, Integer[] nodes){
@@ -87,7 +116,24 @@ public class Jabeja {
     Node bestPartner = null;
     double highestBenefit = 0;
 
-    // TODO
+    for(Integer node : nodes){
+      Node nodeq = entireGraph.get(node);
+
+      int d_pp = getDegree(nodep, nodep.getColor());
+      int d_qq = getDegree(nodeq, nodeq.getColor());
+
+      double old = Math.pow(d_pp, config.getAlpha()) + Math.pow(d_qq, config.getAlpha());
+
+      int d_pq = getDegree(nodep, nodeq.getColor());
+      int d_qp = getDegree(nodeq, nodep.getColor());
+
+      double new_ = Math.pow(d_pq, config.getAlpha()) + Math.pow(d_qp, config.getAlpha());
+
+      if (new_ * T > old && new_ > highestBenefit){
+        bestPartner = nodeq;
+        highestBenefit = new_;
+      }
+    }
 
     return bestPartner;
   }

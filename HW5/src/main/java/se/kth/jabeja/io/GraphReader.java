@@ -46,8 +46,10 @@ public class GraphReader {
           continue;
 
         String[] parts = strLine.split(DELIMETER);
+        
         numNodes = Integer.parseInt(parts[0]);
         numEdges = Integer.parseInt(parts[1]);
+        
         break;
       }
 
