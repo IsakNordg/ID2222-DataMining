@@ -20,7 +20,13 @@ public class Jabeja {
   private float T;
   private boolean resultFileCreated = false;
 
+  private int currentEdgeCut = 0;
+  private int lastEdgeCut = 0;
+  
   private int rounds = 0;
+  private int maxRounds = 200;
+
+  private boolean linearAnnealing = false;
 
   //-------------------------------------------------------------------
   public Jabeja(HashMap<Integer, Node> graph, Config config) {
@@ -44,6 +50,7 @@ public class Jabeja {
       //reduce the temperature
       saCoolDown();
       report();
+      checkConvergance();
     }
   }
 
@@ -53,23 +60,13 @@ public class Jabeja {
   private void saCoolDown(){
     // TODO for second task
 
-    boolean annealing = false;
-
     float min = 0.0001f;
     int maxRounds = 200;
 
-
-    if(annealing){
-        T *= config.getDelta();
-      if (T < min) T = min;
-
-      if (T == min) {
-        rounds++;
-        if(rounds == maxRounds) {
-          T = config.getTemperature();
-          rounds = 0;
-        }
-      }
+    if(!linearAnnealing){
+      T *= config.getDelta();
+      if (T < min)
+        T = min;
     } else {
     if (T > 1)
       T -= config.getDelta();
@@ -109,6 +106,21 @@ public class Jabeja {
     }    
   }
 
+  private void checkConvergance(){
+
+    // If we have converged to a solution, we reset the temperature
+    if (currentEdgeCut == lastEdgeCut){
+      rounds++;
+      if(rounds == maxRounds){
+        T = config.getTemperature();
+        rounds = 0;
+      }
+    } else {
+      rounds = 0;
+    }
+    lastEdgeCut = currentEdgeCut;
+  }
+
   public Node findPartner(int nodeId, Integer[] nodes){
 
     Node nodep = entireGraph.get(nodeId);
@@ -129,9 +141,20 @@ public class Jabeja {
 
       double new_ = Math.pow(d_pq, config.getAlpha()) + Math.pow(d_qp, config.getAlpha());
 
-      if (new_ * T > old && new_ > highestBenefit){
-        bestPartner = nodeq;
-        highestBenefit = new_;
+      if(linearAnnealing){
+        if (new_ * T > old && new_ > highestBenefit){
+          bestPartner = nodeq;
+          highestBenefit = new_;
+        }
+      }else{
+        double ap = Math.exp((new_ - old) / T);
+        Random random = new Random();
+
+        // if acceptance probability is higher than random number and higher than the highest benefit
+        if (ap > random.nextDouble() && ap > highestBenefit){
+          bestPartner = nodeq;
+          highestBenefit = ap;
+        }
       }
     }
 
@@ -255,6 +278,8 @@ public class Jabeja {
             ", migrations: " + migrations);
 
     saveToFile(edgeCut, migrations);
+
+    currentEdgeCut = edgeCut;
   }
 
   private void saveToFile(int edgeCuts, int migrations) throws IOException {
